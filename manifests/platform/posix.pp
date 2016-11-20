@@ -16,7 +16,7 @@
 #
 class splunk::platform::posix (
   $splunkd_port = $splunk::splunkd_port,
-  $splunk_user = $splunk::params::splunk_user,
+  $splunk_user = $splunk::splunk_user,
 ) inherits splunk::virtual {
 
   include ::splunk::params

@@ -15,6 +15,18 @@ describe 'splunk' do
 
           it { is_expected.to contain_service('splunk') }
           it { is_expected.to contain_package('splunk').with_ensure('installed') }
+
+          it { is_expected.to contain_exec('license_splunk').with_user('root') }
+          it { is_expected.to contain_exec('enable_splunk').with_command(%r{-user root}) }
+        end
+
+        context 'splunk class with splunk_user' do
+          let(:params) do
+            { splunk_user: 'splunk' }
+          end
+
+          it { is_expected.to contain_exec('license_splunk').with_user('splunk') }
+          it { is_expected.to contain_exec('enable_splunk').with_command(%r{-user splunk}) }
         end
       end
     end
