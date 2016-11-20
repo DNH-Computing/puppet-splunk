@@ -79,4 +79,11 @@ class splunk::platform::posix (
     require  => Service['splunk'],
   }
 
+  # This is a virtual resource declared in the splunk::virtual class. We need
+  # to override it since the default service provider on some platforms (e.g.
+  # Solaris and new versions of Ubuntu) is not init.
+  Service['splunk'] {
+    provider => 'init',
+  }
+
 }
