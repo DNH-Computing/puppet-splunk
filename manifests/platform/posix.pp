@@ -15,18 +15,25 @@
 # Requires: nothing
 #
 class splunk::platform::posix (
-  $splunkd_port = $splunk::splunkd_port,
-  $splunk_user = $splunk::splunk_user,
+  $splunkd_port  = $splunk::splunkd_port,
+  $splunk_user   = $splunk::splunk_user,
+  $seed_password = false,
 ) inherits splunk::virtual {
 
   include ::splunk::params
   # Many of the resources declared here are virtual. They will be realized by
   # the appropriate including class if required.
 
+  if $seed_password {
+    $seed_password_params = " --seed-passwd '${seed_password}'"
+  } else {
+    $seed_password_params = ''
+  }
+
   # Commands to run to enable the SplunkUniversalForwarder
   @exec { 'license_splunkforwarder':
     path    => ["${splunk::params::forwarder_dir}/bin", '/bin', '/usr/bin'],
-    command => 'splunk start --accept-license --answer-yes',
+    command => "splunk start --accept-license --answer-yes${seed_password_params}",
     user    => $splunk_user,
     onlyif  => 'test -f /opt/splunkforwarder/ftr',
     timeout => 0,
@@ -45,7 +52,7 @@ class splunk::platform::posix (
   # Commands to run to enable full Splunk
   @exec { 'license_splunk':
     path    => ["${splunk::params::server_dir}/bin", '/bin', '/usr/bin'],
-    command => 'splunk start --accept-license --answer-yes',
+    command => "splunk start --accept-license --answer-yes${seed_password_params}",
     user    => $splunk_user,
     onlyif  => 'test -f /opt/splunk/ftr',
     timeout => 0,
